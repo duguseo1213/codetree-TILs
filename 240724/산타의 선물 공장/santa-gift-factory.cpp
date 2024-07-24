@@ -82,7 +82,7 @@ void init() {
 
 void drop() {
 	int w_max;
-	int sum = 0;
+	long long sum = 0;
 	scanf("%d", &w_max);
 	for (int i = 0; i < M; i++) {
 
@@ -127,7 +127,7 @@ void drop() {
 		}
 	}
 
-	printf("%d\n", sum);
+	printf("%lld\n", sum);
 
 }
 
