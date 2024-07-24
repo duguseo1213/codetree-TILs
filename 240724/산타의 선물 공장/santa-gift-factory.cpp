@@ -109,7 +109,7 @@ void drop() {
 			}
 			else {
 				
-				if(temp->next==&Tail[i] && temp->prev==&Head[i])
+				if (temp->next == &Tail[i] && temp->prev == &Head[i]) continue;
 
 				Head[i].next->prev = Tail[i].prev;
 				Head[i].next->next->prev = &Head[i];
