@@ -15,21 +15,21 @@ struct Node {
 	Node* next;
 };
 
-Node Head[10];
-Node Tail[10];
+Node Head[11];
+Node Tail[11];
 
-int broken[10];
+int broken[11];
 
 
 unordered_map<int, Node*> um;
 
-Node pool[100001];
+Node pool[100011];
 int ncnt;
 int q;
 int N;
 int M;
 
-int arr[2][100001];
+int arr[2][100011];
 
 void init() {
 	scanf("%d %d", &N, &M);
