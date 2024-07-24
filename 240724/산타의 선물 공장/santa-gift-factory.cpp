@@ -1,295 +1,315 @@
-#define P printf
 #define _CRT_SECURE_NO_WARNINGS
-
 #include <iostream>
+#include <set>
+#include <vector>
+#include <queue>
 #include <unordered_map>
-
+#define P printf 
 using namespace std;
 
-struct Node {
-
+struct NODE {
 	int id;
-	int W;
-	int bnum;
-	Node* prev;
-	Node* next;
+	int weight;
+	NODE* next;
+	NODE* before;
 };
 
-Node Head[11];
-Node Tail[11];
+NODE HEAD[10];
+NODE DATAS[100010];
 
-int broken[11];
+int rail[10];
 
+unordered_map <int, pair<NODE*, int>> um;
 
-unordered_map<int, Node*> um;
+int cnt;
 
-Node pool[100011];
-int ncnt;
-int q;
-int N;
-int M;
+int N, M;
 
-int arr[2][100011];
+vector<int> input_id;
+vector<int> input_weight;
 
-void init() {
-	scanf("%d %d", &N, &M);
-
-	for (int i = 0; i < N; i++) {
-
-		scanf("%d", &arr[0][i]);
+int find(int tar)
+{
+	if (tar == rail[tar])
+	{
+		return tar;
 	}
-	for (int i = 0; i < N; i++) {
+	int root = find(rail[tar]);
 
-		scanf("%d", &arr[1][i]);
-	}
-
-	for (int i = 0; i < M; i++) {
-
-		for (int j = 0; j < N / M; j++) {
-
-			Node* nd = &pool[ncnt];
-			nd->id = arr[0][ncnt];
-			nd->W = arr[1][ncnt];
-			nd->bnum = i;
-			if (Head[i].next == NULL && Tail[i].next == NULL) {
-
-				nd->next = &Tail[i];
-				nd->prev = &Head[i];
-
-				Head[i].next = nd;
-				Tail[i].prev = nd;
+	return root;
 
 
-			}
-			else {
-
-				nd->next = &Tail[i];
-				nd->prev = Tail[i].prev;
-
-				Tail[i].prev->next = nd;
-
-				Tail[i].prev = nd;
-
-			}
-
-			um[nd->id] = nd;
-			ncnt++;
-		}
-
-	}
 
 }
 
-void drop() {
+void setunion(int a, int b)
+{
+	int t1 = find(a);
+	int t2 = find(b);
+	if (t1 == t2) return;
+
+	rail[t2] = t1;
+}
+
+void make(int h, int id, int weight)
+{
+	NODE* nd = &DATAS[cnt];
+
+	nd->id = id;
+	nd->weight = weight;
+
+
+	if (!HEAD[h].next)
+	{
+		nd->next = &HEAD[h];
+		nd->before = &HEAD[h];
+		HEAD[h].next = nd;
+		HEAD[h].before = nd;
+
+	}
+	else
+	{
+		nd->next = HEAD[h].next;
+		nd->next->before = nd;
+		HEAD[h].next = nd;
+		nd->before = &HEAD[h];
+
+	}
+	um[input_id.back()] = { nd, h };
+	cnt++;
+
+	return;
+}
+
+void init()
+{
+	int n, m;
+	scanf("%d %d", &n, &m);
+	N = n;
+	M = m;
+
+	int id;
+	int weight;
+	/*
+	for (int i = 0; i < 10; i++)
+	{
+		HEAD[i].next = &HEAD[i];
+		HEAD[i].before = &HEAD[i];
+	}*/
+
+	for (int i = 0; i < m; i++)
+	{
+		for (int j = 0; j < n / m; j++)
+		{
+			scanf("%d", &id);
+			input_id.push_back(id);
+		}
+	}
+
+	for (int i = 0; i < m; i++)
+	{
+		for (int j = 0; j < n / m; j++)
+		{
+			scanf("%d", &weight);
+			input_weight.push_back(weight);
+		}
+	}
+
+	for (int i = m - 1; i >= 0; i--)
+	{
+		for (int j = 0; j < n / m; j++)
+		{
+
+			make(i, input_id.back(), input_weight.back());
+
+			input_id.pop_back();
+			input_weight.pop_back();
+		}
+	}
+
+
+
+
+	for (int i = 0; i < M; i++)
+	{
+		rail[i] = i;
+	}
+
+
+}
+
+void down()
+{
 	int w_max;
-	int sum = 0;
 	scanf("%d", &w_max);
-	for (int i = 0; i < M; i++) {
+	long long sum = 0;
+	for (int i = 0; i < M; i++)
+	{
+		if (find(i) == i && HEAD[i].next->id != 0)
+		{
 
-		if (broken[i] == -1) continue;
+			//P("%d ", HEAD[i].next->weight);
+			if (HEAD[i].next->weight <= w_max) //하차시키기 //um에서 지우기
+			{
 
-		Node* temp = &Head[i];
+				um.erase(HEAD[i].next->id);
+				sum = sum + HEAD[i].next->weight;
+				//P("%d ", HEAD[i].next->weight);
+				HEAD[i].next->next->before = &HEAD[i];
+				HEAD[i].next = HEAD[i].next->next;
 
-		if (temp->next != &Tail[i]) {
-			temp = temp->next;
 
-			if (temp->W <= w_max) {
-
-				sum += temp->W;
-
-				if (temp->next != &Tail[i]) {
-					Head[i].next = temp->next;
-					temp->next->prev = &Head[i];
-				}
-				else {
-					Head[i].next = &Tail[i];
-					Tail[i].prev = &Head[i];
-				}
-				um.erase(temp->id);
 			}
-			else {
-				
-				if (temp->next == &Tail[i] && temp->prev == &Head[i]) continue;
+			else //맨뒤로 보내기
+			{
+				NODE* nd = HEAD[i].next;
 
-				Head[i].next->prev = Tail[i].prev;
-				Head[i].next->next->prev = &Head[i];
+				HEAD[i].next = nd->next;
+				nd->next->before = &HEAD[i];
 
-				Tail[i].prev = Head[i].next;
+				nd->next = &HEAD[i];
+				nd->before = HEAD[i].before;
 
-				Head[i].next = Tail[i].prev->next;
+				HEAD[i].before->next = nd;
+				HEAD[i].before = nd;
 
-				Tail[i].prev->prev->next = Tail[i].prev;
 
-				Tail[i].prev->next = &Tail[i];
-				
 			}
-
 		}
 	}
+	printf("%lld\n", sum);
 
-	printf("%d\n", sum);
 
 }
 
-void remove() {
+void remove()
+{
 	int r_id;
 	scanf("%d", &r_id);
+	if (um.find(r_id) != um.end())
+	{
+		NODE* nd = um[r_id].first;
 
-	if (um.find(r_id) != um.end()) {
+		nd->before->next = nd->next;
 
-		Node* temp = um[r_id];
-
-		temp->prev->next = temp->next;
-		temp->next->prev = temp->prev;
-
+		nd->next->before = nd->before;
 
 
 
 		um.erase(r_id);
-
 		printf("%d\n", r_id);
 	}
-	else {
+	else
+	{
 		printf("-1\n");
 	}
-
-
 }
 
-void check() {
-
+void check()
+{
 	int f_id;
 	scanf("%d", &f_id);
 
+	if (um.find(f_id) != um.end())
+	{
+		NODE* nd = um[f_id].first;
+		int ral = find(um[f_id].second);
 
-	if (um.find(f_id) != um.end()) {
+		HEAD[ral].before->next = HEAD[ral].next;
+		HEAD[ral].next->before = HEAD[ral].before;
 
-		Node* temp = um[f_id];
+		nd->before->next = &HEAD[ral];
+		HEAD[ral].before = nd->before;
 
-		int num = temp->bnum;
-
-		while (1) {
-
-			if (broken[num] == 0) break;
-
-			num++;
-			num = num % M;
-		}
-
-		Head[num].next->prev = Tail[num].prev;
-		Tail[num].prev->next = Head[num].next;
-
-		temp->prev->next = &Tail[num];
-		Tail[num].prev = temp->prev;
-
-
-		Head[num].next = temp;
-		temp->prev = &Head[num];
+		HEAD[ral].next = nd;
+		nd->before = &HEAD[ral];
 
 
 
 
-
-		printf("%d\n", num + 1);
+		printf("%d\n", find(um[f_id].second) + 1);
 	}
-	else {
+	else
+	{
 		printf("-1\n");
 	}
 
+
+
 }
 
-void broke() {
+void destroy()
+{
 	int b_num;
-
 	scanf("%d", &b_num);
-
-
 	b_num--;
-	if (broken[b_num] == -1) {
+	if (find(b_num) != b_num)
+	{
 		printf("-1\n");
-		return;
 	}
-	printf("%d\n", b_num + 1);
-	broken[b_num] = -1;
+	else
+	{
+		int cnt = b_num;
+		while (1)
+		{
 
-	int num = b_num;
+			cnt = (cnt + 1) % M;
 
-	while (1) {
+			if (rail[cnt] == cnt)
+			{
+				
+					//HEAD[cnt].next->before = HEAD[b_num].before;
 
-		if (broken[num] == 0) break;
+					HEAD[cnt].before->next = HEAD[b_num].next;
+					HEAD[b_num].next->before = HEAD[cnt].before;
 
-		num++;
-		num = num % M;
+					HEAD[b_num].before->next = &HEAD[cnt];
+					HEAD[cnt].before = HEAD[b_num].before;
+
+
+					setunion(cnt, b_num);
+				
+				break;
+			}
+
+		}
+		printf("%d\n", b_num + 1);
 	}
-
-	Tail[num].prev->next = Head[b_num].next;
-	Head[b_num].next->prev = Tail[num].prev;
-
-
-	Tail[b_num].prev->next = &Tail[num];
-	Tail[num].prev = Tail[b_num].prev;
-
-
 
 
 }
 
-int main() {
+int main()
+{
+	//freopen("sample_input.txt", "r", stdin);
+	int q;
 	scanf("%d", &q);
 
-	for (int i = 0; i < q; i++) {
+	for (int i = 0; i < q; i++)
+	{
 		int qnum;
 		scanf("%d", &qnum);
-
-		if (qnum == 100) {
+		if (qnum == 100)
+		{
 			init();
 		}
-		else if (qnum == 200) {
-			drop();
+		else if (qnum == 200)
+		{
+			down();
 		}
-		else if (qnum == 300) {
+		else if (qnum == 300)
+		{
 			remove();
 		}
-		else if (qnum == 400) {
+		else if (qnum == 400)
+		{
 			check();
 		}
-		else if (qnum == 500) {
-			broke();
+		else
+		{
+			destroy();
 		}
-		/*
-		for (int j = 0; j < M; j++) {
-
-
-			if (broken[j] == -1) continue;
-
-			Node* temp = &Head[j];
-			
-			while (1) {
-				if (temp == &Tail[j]) break;
-
-				P("id: %d w: %d ", temp->id,temp->W);
-
-				temp = temp->next;
-			}
-			P("\n");
-		}
-		P("\n");
-		for (int j = 0; j < M; j++) {
-
-			if (broken[j] == -1) continue;
-
-			Node* temp = &Tail[j];
-
-			while (1) {
-				if (temp == &Head[j]) break;
-
-				P("id: %d w: %d ", temp->id, temp->W);
-
-				temp = temp->prev;
-			}
-			P("\n");
-		}
-		P("\n");*/
 	}
+
 
 }
