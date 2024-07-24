@@ -257,7 +257,7 @@ int main() {
 		else if (qnum == 500) {
 			broke();
 		}
-		
+		/*
 		for (int j = 0; j < M; j++) {
 
 
@@ -290,7 +290,7 @@ int main() {
 			}
 			P("\n");
 		}
-		P("\n");
+		P("\n");*/
 	}
 
 }
