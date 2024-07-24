@@ -43,6 +43,7 @@ void init() {
 		um[i] = nd;
 		lcnt[num]++;
 		if (Head[num].next == &Tail[num]) {
+			
 			Head[num].next = nd;
 			Tail[num].prev = nd;
 
@@ -182,15 +183,27 @@ void divide() {
 	scanf("%d %d", &src, &dst);
 
 	int num = lcnt[src] / 2;
-	lcnt[src] = lcnt[src] / 2+1;
+
+	if (num == 0) {
+		printf("%d\n", lcnt[dst]);
+		return;
+	}
+
+	if (lcnt[src] % 2 == 0) {
+		lcnt[src] = lcnt[src] / 2;
+
+	}
+	else {
+		lcnt[src] = lcnt[src] / 2 + 1;
+	}
+
+	
 
 	lcnt[dst] += num;
 	printf("%d\n", lcnt[dst]);
 
 
-	if (num == 0) {
-		return;
-	}
+	
 
 
 	Node* temp = &Head[src];
