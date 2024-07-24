@@ -130,28 +130,19 @@ void drop() {
 
 				Tail[i].prev = Head[i].next;
 				
-
-
-				
 				Head[i].next = Head[i].next->next;
 
 				Head[i].next->next->prev = &Head[i];
 
 
 				temp->next = &Tail[i];
-				
-
 			}
 
 		}
-
-
 	}
 
 	printf("%d\n", sum);
 
-
-	
 }
 
 void remove() {
@@ -164,6 +155,9 @@ void remove() {
 
 		temp->prev->next = temp->next;
 		temp->next->prev = temp->prev;
+
+		
+
 
 		um.erase(r_id);
 
@@ -196,21 +190,19 @@ void check() {
 			num = num % M;
 		}
 
-		temp = temp->prev;
-
-		if (temp->next == &Tail[num]) {
-			printf("%d\n", num+1);
-			return;
-		}
-
-		Tail[num].prev->next = Head[num].next;
 		Head[num].next->prev = Tail[num].prev;
+		Tail[num].prev->next = Head[num].next;
 
-		Head[num].next = temp->next;
-		temp->next->prev = &Head[num];
+		temp->prev->next = &Tail[num];
+		Tail[num].prev = temp->prev;
 
-		temp->next = &Tail[num];
-		Tail[num].prev = temp;
+
+		Head[num].next = temp;
+		temp->prev = &Head[num];
+
+
+
+		
 
 		printf("%d\n", num+1);
 	}
@@ -231,6 +223,7 @@ void broke() {
 		printf("-1\n");
 		return;
 	}
+	printf("%d\n", b_num + 1);
 	broken[b_num] = -1;
 
 	int num = b_num;
@@ -250,7 +243,7 @@ void broke() {
 	Tail[b_num].prev->next = &Tail[num];
 	Tail[num].prev = Tail[b_num].prev;
 	
-	printf("%d\n", b_num+1);
+	
 
 
 }
@@ -277,14 +270,14 @@ int main() {
 		else if (qnum == 500) {
 			broke();
 		}
-		/*
+		
 		for (int j = 0; j < M; j++) {
 
 
 			if (broken[j] == -1) continue;
 
 			Node* temp = &Head[j];
-
+			/*
 			while (1) {
 				if (temp == &Tail[j]) break;
 
@@ -292,9 +285,9 @@ int main() {
 
 				temp = temp->next;
 			}
-			P("\n");
-		}*/
-
+			P("\n");*/
+		}
+		//P("\n");
 	}
 
 }
