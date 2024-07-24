@@ -42,7 +42,7 @@ void init() {
 		nd->id = i;
 		um[i] = nd;
 		lcnt[num]++;
-		if (Head[num].next == &Tail[i]) {
+		if (Head[num].next == &Tail[num]) {
 			Head[num].next = nd;
 			Tail[num].prev = nd;
 
