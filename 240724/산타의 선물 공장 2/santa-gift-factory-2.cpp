@@ -27,11 +27,11 @@ int Q, N,M;
 void init() {
 	scanf("%d %d", &N, &M);
 	
-
+	/*
 	for (int i = 1; i <= N; i++) {
 		Head[i].next = &Tail[i];
 		Tail[i].prev = &Head[i];
-	}
+	}*/
 
 	for (int i = 1; i <= M; i++) {
 		int num;
