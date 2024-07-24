@@ -1,4 +1,4 @@
-#define P 
+#define P printf
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <iostream>
@@ -16,10 +16,10 @@ struct Node {
 
 unordered_map<int, Node*> um;
 
-Node pool[100010];
-Node Head[100010];
-Node Tail[100010];
-int lcnt[100010];
+Node pool[100110];
+Node Head[100110];
+Node Tail[100110];
+int lcnt[100110];
 int ncnt;
 
 int Q, N,M;
@@ -73,6 +73,13 @@ void move() {
 	int src, dst;
 
 	scanf("%d %d", &src, &dst);
+
+	if (lcnt[src] == 0) {
+		printf("%d\n", lcnt[dst]);
+		return;
+
+	}
+
 
 	Tail[src].prev->next = Head[dst].next;
 	Head[dst].next->prev = Tail[src].prev;
@@ -299,8 +306,8 @@ int main() {
 			P("\n");
 		}
 		P("\n");
-		
 		*/
+		
 
 
 
