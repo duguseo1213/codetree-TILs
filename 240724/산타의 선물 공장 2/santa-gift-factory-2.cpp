@@ -27,11 +27,11 @@ int Q, N,M;
 void init() {
 	scanf("%d %d", &N, &M);
 	
-	/*
+	
 	for (int i = 1; i <= N; i++) {
 		Head[i].next = &Tail[i];
 		Tail[i].prev = &Head[i];
-	}*/
+	}
 
 	for (int i = 1; i <= M; i++) {
 		int num;
@@ -42,7 +42,7 @@ void init() {
 		nd->id = i;
 		um[i] = nd;
 		lcnt[num]++;
-		if (Head[num].next == NULL) {
+		if (Head[num].next == &Tail[i]) {
 			Head[num].next = nd;
 			Tail[num].prev = nd;
 
@@ -79,18 +79,19 @@ void move() {
 		return;
 
 	}
-
-
-	Tail[src].prev->next = Head[dst].next;
-	Head[dst].next->prev = Tail[src].prev;
-
-	Head[src].next->prev = &Head[dst];
-	Head[dst].next = Head[src].next;
-
 	
-	Head[src].next = &Tail[src];
-	Tail[src].prev = &Head[src];
+	else {
 
+		Tail[src].prev->next = Head[dst].next;
+		Head[dst].next->prev = Tail[src].prev;
+
+		Head[src].next->prev = &Head[dst];
+		Head[dst].next = Head[src].next;
+
+
+		Head[src].next = &Tail[src];
+		Tail[src].prev = &Head[src];
+	}
 
 
 	lcnt[dst] += lcnt[src];
