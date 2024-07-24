@@ -42,7 +42,7 @@ void init() {
 
 		scanf("%d", &arr[1][i]);
 	}
-	
+
 	for (int i = 0; i < M; i++) {
 
 		for (int j = 0; j < N / M; j++) {
@@ -52,9 +52,6 @@ void init() {
 			nd->W = arr[1][ncnt];
 			nd->bnum = i;
 			if (Head[i].next == NULL && Tail[i].next == NULL) {
-
-				Head[i].prev = &Tail[i];
-				Tail[i].next = &Head[i];
 
 				nd->next = &Tail[i];
 				nd->prev = &Head[i];
@@ -76,20 +73,10 @@ void init() {
 			}
 
 			um[nd->id] = nd;
-
-
 			ncnt++;
 		}
 
-		
-
-
-
 	}
-
-	
-
-
 
 }
 
@@ -103,7 +90,7 @@ void drop() {
 
 		Node* temp = &Head[i];
 
-		if (temp->next!=&Tail[i]) {
+		if (temp->next != &Tail[i]) {
 			temp = temp->next;
 
 			if (temp->W <= w_max) {
@@ -121,21 +108,19 @@ void drop() {
 				um.erase(temp->id);
 			}
 			else {
-
-				temp = Head[i].next;
-
-				Tail[i].prev->next = Head[i].next;
-
-				temp->prev = Tail[i].prev;
-
-				Tail[i].prev = Head[i].next;
 				
-				Head[i].next = Head[i].next->next;
 
+				Head[i].next->prev = Tail[i].prev;
 				Head[i].next->next->prev = &Head[i];
 
+				Tail[i].prev = Head[i].next;
 
-				temp->next = &Tail[i];
+				Head[i].next = Tail[i].prev->next;
+
+				Tail[i].prev->prev->next = Tail[i].prev;
+
+				Tail[i].prev->next = &Tail[i];
+				
 			}
 
 		}
@@ -156,7 +141,7 @@ void remove() {
 		temp->prev->next = temp->next;
 		temp->next->prev = temp->prev;
 
-		
+
 
 
 		um.erase(r_id);
@@ -180,7 +165,7 @@ void check() {
 
 		Node* temp = um[f_id];
 
-		int num=temp->bnum;
+		int num = temp->bnum;
 
 		while (1) {
 
@@ -202,9 +187,9 @@ void check() {
 
 
 
-		
 
-		printf("%d\n", num+1);
+
+		printf("%d\n", num + 1);
 	}
 	else {
 		printf("-1\n");
@@ -216,7 +201,7 @@ void broke() {
 	int b_num;
 
 	scanf("%d", &b_num);
-	
+
 
 	b_num--;
 	if (broken[b_num] == -1) {
@@ -242,8 +227,8 @@ void broke() {
 
 	Tail[b_num].prev->next = &Tail[num];
 	Tail[num].prev = Tail[b_num].prev;
-	
-	
+
+
 
 
 }
@@ -270,14 +255,14 @@ int main() {
 		else if (qnum == 500) {
 			broke();
 		}
-		
+		/*
 		for (int j = 0; j < M; j++) {
 
 
 			if (broken[j] == -1) continue;
 
 			Node* temp = &Head[j];
-			/*
+			
 			while (1) {
 				if (temp == &Tail[j]) break;
 
@@ -285,9 +270,25 @@ int main() {
 
 				temp = temp->next;
 			}
-			P("\n");*/
+			P("\n");
 		}
-		//P("\n");
+		P("\n");
+		for (int j = 0; j < M; j++) {
+
+			if (broken[j] == -1) continue;
+
+			Node* temp = &Tail[j];
+
+			while (1) {
+				if (temp == &Head[j]) break;
+
+				P("id: %d w: %d ", temp->id, temp->W);
+
+				temp = temp->prev;
+			}
+			P("\n");
+		}
+		P("\n");*/
 	}
 
 }
